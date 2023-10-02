@@ -1,5 +1,5 @@
 const express = require("express");
-const { sendTopics } = require("./controller/controller");
+const { sendTopics } = require("../controller/controller");
 
 const app = express();
 

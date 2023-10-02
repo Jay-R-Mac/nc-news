@@ -1,4 +1,4 @@
-const app = require("../app");
+const app = require("../db/app");
 const { getTopics } = require("../model/model.js");
 
 const sendTopics = function (req, res, next) {
