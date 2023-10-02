@@ -44,7 +44,6 @@ describe("error handling", () => {
       .get("/notvalid")
       .expect(404)
       .then((body) => {
-        console.log(body.body);
         expect(body.res.statusMessage).toBe("Not Found");
       });
   });
