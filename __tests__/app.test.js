@@ -28,6 +28,7 @@ describe("GET /api/topics", () => {
     return request(app)
       .get("/api/topics")
       .then(({ body }) => {
+        expect(body.length).toBe(3)
         body.forEach((topic)=>{
           expect(topic).toMatchObject({
             slug : expect.any(String),
