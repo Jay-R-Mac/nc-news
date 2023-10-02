@@ -3,7 +3,6 @@ const app = require("../app.js");
 const connection = require("../db/connection.js");
 const seed = require("../db/seeds/seed.js");
 const data = require("../db/data/test-data/index.js");
-const { string } = require("pg-format");
 
 beforeEach(() => {
   return seed(data);
@@ -28,20 +27,25 @@ describe("GET /api/topics", () => {
     return request(app)
       .get("/api/topics")
       .then(({ body }) => {
-        expect(body.length).toBe(3)
-        body.forEach((topic)=>{
+        expect(body.length).toBe(3);
+        body.forEach((topic) => {
           expect(topic).toMatchObject({
-            slug : expect.any(String),
-            description: expect.any(String)
-          })
-        })
-        
+            slug: expect.any(String),
+            description: expect.any(String),
+          });
+        });
       });
   });
 });
 
-describe("error handling", ()=>{
-  it("should return a 404 error status code when using a GET all",()=>{
-    return request(app).get("/api/notvalid").expect(404)
-  })
-})
+describe("error handling", () => {
+  it("should return a 404 error status code and a message when using a GET", () => {
+    return request(app)
+      .get("/notvalid")
+      .expect(404)
+      .then((body) => {
+        console.log(body.body);
+        expect(body.res.statusMessage).toBe("Not Found");
+      });
+  });
+});
