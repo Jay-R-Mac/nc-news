@@ -14,10 +14,9 @@ const sendEndpoints = function (req, res, next) {
 
 const sendArticleId = function (req, res, next) {
   const { article_id } = req.params;
-  console.log(req.params);
+
   getArticleId(article_id)
     .then((article) => {
-      console.log(article);
       res.status(200).send({ article });
     })
 
