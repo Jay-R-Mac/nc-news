@@ -13,10 +13,12 @@ const sendEndpoints = function (req, res, next) {
 };
 
 const sendArticleId = function (req, res, next) {
-  const articleId = Number(req.params.article_id);
-  getArticleId(articleId)
+  const { article_id } = req.params;
+  console.log(req.params);
+  getArticleId(article_id)
     .then((article) => {
-      res.status(200).send(article);
+      console.log(article);
+      res.status(200).send({ article });
     })
 
     .catch((err) => {
