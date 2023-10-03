@@ -60,7 +60,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/2")
       .then(({ body }) =>
         expect(body).toMatchObject({
-          article_id: expect.any(Number),
+          article_id: 2,
           title: expect.any(String),
           topic: expect.any(String),
           author: expect.any(String),
@@ -71,9 +71,6 @@ describe("GET /api/articles/:article_id", () => {
         })
       );
   });
-  it("responds with a 404 when an article does not exist", () => {
-    return request(app).get("/api/articles/200000").expect(404);
-  });
   it("responds with a 404 and a message when article is not found", () => {
     return request(app)
       .get("/api/articles/200000")
@@ -82,14 +79,12 @@ describe("GET /api/articles/:article_id", () => {
         expect(JSON.parse(text)).toEqual({ message: "Article Not Found" });
       });
   });
-  it("responds with a 400 when an invalid id is passed", () => {
-    return request(app).get("/api/articles/hello").expect(400);
-  });
+
   it("responds with a 400 status and a message when an invalid id is passed", () => {
     return request(app)
       .get("/api/articles/hello")
       .expect(400)
-      .then(({res}) => expect(res.statusMessage).toBe("Bad Request"));
+      .then(({ res }) => expect(res.statusMessage).toBe("Bad Request"));
   });
 });
 
