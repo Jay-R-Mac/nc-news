@@ -1,30 +1,31 @@
 const express = require("express");
-const { sendTopics, sendEndpoints } = require("../controller/controller");
+const {
+  sendTopics,
+  sendEndpoints,
+  sendArticleId,
+} = require("../controller/controller");
 
 const app = express();
 
 app.get("/api/topics", sendTopics);
 
-app.get("/api", sendEndpoints)
+app.get("/api", sendEndpoints);
 
-
-
-
-
-
-
-
-
-
-
+app.get("/api/articles/:article_id", sendArticleId);
 
 app.all("/*", (req, res) => {
   res.status(404).send({ message: "Not Found" });
 });
 
 app.use((err, req, res, next) => {
-  console.log(err);
-  res.status(500).send({ message: "Internal Server Error" });
+  console.error(err);
+  if (err.code === "22P02") {
+    res.status(400).send();
+  } else if (err.status) {
+    res.status(err.status).send({ message: err.message });
+  } else {
+    res.status(500).send({ message: "Internal Server Error" });
+  }
 });
 
 module.exports = app;
