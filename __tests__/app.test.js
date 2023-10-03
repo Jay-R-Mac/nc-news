@@ -3,6 +3,7 @@ const app = require("../db/app");
 const connection = require("../db/connection.js");
 const seed = require("../db/seeds/seed.js");
 const data = require("../db/data/test-data/index.js");
+const endPoints = require("../endpoints.json")
 
 beforeEach(() => {
   return seed(data);
@@ -35,6 +36,16 @@ describe("GET /api/topics", () => {
           });
         });
       });
+  });
+});
+
+describe("GET /api", () => {
+  it("responds with a 200 status message", () => {
+    return request(app).get("/api").expect(200);
+  });
+  it("should contain the same information as endpoints.json", () => {
+    return request(app).get("/api").expect(200)
+    .then(data => expect(data.body).toEqual(endPoints));
   });
 });
 
