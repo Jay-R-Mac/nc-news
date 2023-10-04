@@ -57,4 +57,18 @@ function getArticleComments(articleId) {
 
 }
 
-module.exports = { getTopics, getArticleId, getArticles, getArticleComments };
+function postComment(article, newComment) {
+  const { username, body } = newComment
+  const author = username
+  const article_id = article
+  return db.query("INSERT INTO comments (author, body, article_id) VALUES ($1,$2,$3) RETURNING *;", [author, body, article_id])
+    .then(({ rows }) => {
+      return rows[0]
+    })
+
+}
+
+
+
+
+module.exports = { getTopics, getArticleId, getArticles, getArticleComments, postComment };

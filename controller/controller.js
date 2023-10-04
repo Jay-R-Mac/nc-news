@@ -1,5 +1,5 @@
 const app = require("../db/app");
-const { getTopics, getArticleId, getArticles, getArticleComments } = require("../model/model.js");
+const { getTopics, getArticleId, getArticles, getArticleComments, postComment } = require("../model/model.js");
 const endpoints = require("../endpoints.json");
 
 const sendTopics = function (req, res, next) {
@@ -39,9 +39,21 @@ const sendArticleComments = function (req, res, next) {
   getArticleComments(article_id).then((comments) => {
     res.status(200).send(comments)
   })
-  .catch((err)=>{
-    next(err)
-  })
+    .catch((err) => {
+      next(err)
+    })
 
 }
-module.exports = { sendTopics, sendEndpoints, sendArticleId, sendArticles, sendArticleComments };
+
+const recieveArticleComments = function (req, res, next) {
+  const { article_id } = req.params
+  postComment(article_id, req.body).then((comment) => {
+    
+    res.status(201).send(comment)
+  })
+    .catch((err)=>{
+      next(err)
+    })
+
+}
+module.exports = { sendTopics, sendEndpoints, sendArticleId, sendArticles, sendArticleComments, recieveArticleComments };

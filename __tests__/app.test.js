@@ -5,6 +5,7 @@ const seed = require("../db/seeds/seed.js");
 const data = require("../db/data/test-data/index.js");
 const endPoints = require("../endpoints.json");
 
+
 beforeEach(() => {
   return seed(data);
 });
@@ -127,7 +128,7 @@ describe("GET /api/articles", () => {
     return request(app)
       .get("/api/articles")
       .then(({ body }) => {
-        expect([0, 1, 2, 3]).toBeSorted({ Descending: true })
+        expect([0, 1, 2, 3]).toBeSorted("created_at", { descending: true })
       });
   });
 })
@@ -174,5 +175,22 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/hello/comments")
       .expect(400)
       .then(({ res }) => expect(res.statusMessage).toBe("Bad Request"));
+  });
+})
+
+describe("POST /api/articles/:article_id/comments", () => {
+  const newComment = {
+    "username": "lurker",
+    "body": "This is my test article comment"
+  };
+  it("should return the expected output object of the comment with the relevant data", () => {
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({body}) => {
+        expect(body.body).toBe("This is my test article comment")
+      });
+      
   });
 })
