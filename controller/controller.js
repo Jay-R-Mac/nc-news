@@ -1,5 +1,5 @@
 const app = require("../db/app");
-const { getTopics, getArticleId, getArticles } = require("../model/model.js");
+const { getTopics, getArticleId, getArticles, getArticleComments } = require("../model/model.js");
 const endpoints = require("../endpoints.json");
 
 const sendTopics = function (req, res, next) {
@@ -29,7 +29,19 @@ const sendArticles = function (req, res, next) {
   getArticles().then((articles) => {
     res.status(200).send(articles)
   })
+    .catch((err) => {
+      next(err)
+    })
+}
 
+const sendArticleComments = function (req, res, next) {
+  const { article_id } = req.params
+  getArticleComments(article_id).then((comments) => {
+    res.status(200).send(comments)
+  })
+  .catch((err)=>{
+    next(err)
+  })
 
 }
-module.exports = { sendTopics, sendEndpoints, sendArticleId, sendArticles };
+module.exports = { sendTopics, sendEndpoints, sendArticleId, sendArticles, sendArticleComments };

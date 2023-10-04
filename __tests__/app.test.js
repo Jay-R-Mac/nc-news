@@ -131,3 +131,48 @@ describe("GET /api/articles", () => {
       });
   });
 })
+
+describe("GET /api/articles/:article_id/comments", () => {
+  it("responds with a 200 status message", () => {
+    return request(app).get("/api/articles/5/comments").expect(200);
+  });
+  it("responds with an an array of object which contains article information", () => {
+    return request(app)
+      .get("/api/articles/5/comments")
+      .then(({ body }) => {
+        expect(body.length).toBe(2)
+        body.forEach((comment => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            body: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_id: expect.any(Number)
+          })
+        }))
+
+      });
+  });
+  it("responds with an array which contains the articles comments in ascending order", () => {
+    return request(app)
+      .get("/api/articles/5/comments")
+      .then(({ body }) => {
+        expect([0, 1]).toBeSorted({ Descending: true })
+      });
+  });
+  it("responds with a 404 and a message when article is not found", () => {
+    return request(app)
+      .get("/api/articles/999/comments")
+      .expect(404)
+      .then(({ text }) => {
+        expect(JSON.parse(text)).toEqual({ message: "Article Not Found" });
+      });
+  });
+  it("responds with a 400 status and a message when an invalid id is passed", () => {
+    return request(app)
+      .get("/api/articles/hello/comments")
+      .expect(400)
+      .then(({ res }) => expect(res.statusMessage).toBe("Bad Request"));
+  });
+})
