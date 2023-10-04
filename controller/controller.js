@@ -1,5 +1,5 @@
 const app = require("../db/app");
-const { getTopics, getArticleId } = require("../model/model.js");
+const { getTopics, getArticleId, getArticles } = require("../model/model.js");
 const endpoints = require("../endpoints.json");
 
 const sendTopics = function (req, res, next) {
@@ -24,4 +24,12 @@ const sendArticleId = function (req, res, next) {
       next(err);
     });
 };
-module.exports = { sendTopics, sendEndpoints, sendArticleId };
+
+const sendArticles = function (req, res, next) {
+  getArticles().then((articles) => {
+    res.status(200).send(articles)
+  })
+
+
+}
+module.exports = { sendTopics, sendEndpoints, sendArticleId, sendArticles };

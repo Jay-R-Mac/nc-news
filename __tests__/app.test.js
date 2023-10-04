@@ -58,7 +58,7 @@ describe("GET /api/articles/:article_id", () => {
   it("responds with an object which contains article information", () => {
     return request(app)
       .get("/api/articles/2")
-      .then(({ body }) =>  {
+      .then(({ body }) => {
         expect(body.article).toMatchObject({
           article_id: 2,
           title: expect.any(String),
@@ -69,7 +69,7 @@ describe("GET /api/articles/:article_id", () => {
           votes: expect.any(Number),
           article_img_url: expect.any(String),
         })
-  });
+      });
   });
   it("responds with a 404 and a message when article is not found", () => {
     return request(app)
@@ -98,3 +98,36 @@ describe("error handling", () => {
       });
   });
 });
+
+describe("GET /api/articles", () => {
+  it("responds with a 200 status message", () => {
+    return request(app).get("/api/articles").expect(200);
+  });
+  it("responds with an an array of object which contains article information", () => {
+    return request(app)
+      .get("/api/articles")
+      .then(({ body }) => {
+        expect(body.length).toBe(13)
+        body.forEach((article => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String)
+          })
+        }))
+
+      });
+  });
+  it("responds with an array which contains the articles in order", () => {
+    return request(app)
+      .get("/api/articles")
+      .then(({ body }) => {
+        expect([0, 1, 2, 3]).toBeSorted({ Descending: true })
+      });
+  });
+})
