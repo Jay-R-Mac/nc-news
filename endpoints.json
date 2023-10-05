@@ -6,12 +6,22 @@
     "description": "serves an array of all topics",
     "queries": [],
     "exampleResponse": {
-      "topics": [{ "slug": "football", "description": "Footie!" }]
+      "topics": [
+        {
+          "slug": "football",
+          "description": "Footie!"
+        }
+      ]
     }
   },
   "GET /api/articles": {
     "description": "serves an array of all articles by date in descending order",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "queries": [
+      "author",
+      "topic",
+      "sort_by",
+      "order"
+    ],
     "exampleResponse": {
       "articles": [
         {
@@ -29,7 +39,11 @@
   },
   "GET /api/users": {
     "description": "serves an array of all users",
-    "queries": ["username", "name", "avatar_url"],
+    "queries": [
+      "username",
+      "name",
+      "avatar_url"
+    ],
     "exampleResponse": {
       "users": [
         {
@@ -53,6 +67,33 @@
           "topic": "cooking",
           "created_at": 1602828180000,
           "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        }
+      ]
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves an array containing comments for a specified article",
+    "queries": [],
+    "exampleResponse": {
+      "articles/5/comments": [
+        {
+          "comment_id": 7,
+          "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          "votes": 16,
+          "author": "butter_bridge",
+          "article_id": 9,
+          "created_at": 1586179020000
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "serves an objet containing posted comment ",
+    "queries": [],
+    "exampleResponse": {
+      "articles/5/comments": [
+        {
+          "body": "This is a unique comment on this article!"
         }
       ]
     }

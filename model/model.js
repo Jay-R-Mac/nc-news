@@ -42,4 +42,34 @@ function getArticles() {
     })
 }
 
-module.exports = { getTopics, getArticleId, getArticles };
+function getArticleComments(articleId) {
+  return db
+    .query("SELECT * FROM comments WHERE article_id =$1 ORDER BY comments.created_at DESC;", [articleId])
+    .then(({ rows }) => {
+
+      return rows;
+    })
+
+}
+
+function postComment(article, newComment) {
+
+
+  const { username, body } = newComment
+  const author = username
+  const article_id = article
+  if (!username || !body) {
+    return Promise.reject({ status: 400, message: "Invalid request" })
+  }
+  return db.query("INSERT INTO comments (author, body, article_id) VALUES ($1,$2,$3) RETURNING *;", [author, body, article_id])
+    .then(({ rows }) => {
+      return rows[0]
+    })
+
+}
+
+
+
+
+
+module.exports = { getTopics, getArticleId, getArticles, getArticleComments, postComment };

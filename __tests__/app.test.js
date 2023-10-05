@@ -5,6 +5,7 @@ const seed = require("../db/seeds/seed.js");
 const data = require("../db/data/test-data/index.js");
 const endPoints = require("../endpoints.json");
 
+
 beforeEach(() => {
   return seed(data);
 });
@@ -127,7 +128,107 @@ describe("GET /api/articles", () => {
     return request(app)
       .get("/api/articles")
       .then(({ body }) => {
-        expect([0, 1, 2, 3]).toBeSorted({ Descending: true })
+        expect([0, 1, 2, 3]).toBeSorted("created_at", { descending: true })
       });
   });
 })
+
+describe("GET /api/articles/:article_id/comments", () => {
+  it("responds with a 200 status message", () => {
+    return request(app).get("/api/articles/5/comments").expect(200);
+  });
+  it("responds with an an array of object which contains article information", () => {
+    return request(app)
+      .get("/api/articles/5/comments")
+      .then(({ body }) => {
+        expect(body.length).toBe(2)
+        body.forEach((comment => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            body: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number)
+          })
+        }))
+
+      });
+  });
+  it("responds with an array which contains the articles comments in descending order", () => {
+    return request(app)
+      .get("/api/articles/5/comments")
+      .then(({ body }) => {
+        expect([0, 1]).toBeSorted({ Descending: true })
+      });
+  });
+  it("responds with a 404 and a message when article is not found", () => {
+    return request(app)
+      .get("/api/articles/999/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("Article Not Found");
+      });
+  });
+  it("responds with a 400 status and a message when an invalid id is passed", () => {
+    return request(app)
+      .get("/api/articles/hello/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Bad Request");
+      });
+  });
+  it("responds with a 200 and a message when article is not found", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ text }) => {
+        expect(text).toEqual("[]");
+      });
+  })
+})
+describe("POST /api/articles/:article_id/comments", () => {
+  const newComment = {
+    "username": "lurker",
+    "body": "This is my test article comment"
+  };
+  const emptyComment = {};
+  it("should return the expected output object of the comment with the relevant data", () => {
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.body).toBe("This is my test article comment")
+      });
+  })
+  it("should return the expected output object of the comment with the relevant data when passed extra data", () => {
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send({
+        "username": "lurker",
+        "body": "This is my test article comment",
+        "motto": "Ad Astra"
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.body).toBe("This is my test article comment")
+      });
+
+  });
+  it("responds with a 400 status and a message when an invalid article id is passed", () => {
+    return request(app)
+      .post("/api/articles/hello/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ res }) => expect(res.statusMessage).toBe("Bad Request"));
+  });
+  it("responds with a 400 status and a message when an no username is passed", () => {
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send(emptyComment)
+      .expect(400)
+      .then(({ text }) => {
+        expect(JSON.parse(text)).toEqual({ message: "Invalid request" });
+      });
+  });
+});
