@@ -47,9 +47,6 @@ const sendArticleComments = function (req, res, next) {
 
 const recieveArticleComments = function (req, res, next) {
   const { article_id } = req.params
-  if(req.body.body === ''){
-    res.status(400).send("You must provide a comment")
-  }
   postComment(article_id, req.body).then((comment) => {
     
     res.status(201).send(comment)

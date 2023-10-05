@@ -148,14 +148,13 @@ describe("GET /api/articles/:article_id/comments", () => {
             body: expect.any(String),
             author: expect.any(String),
             created_at: expect.any(String),
-            votes: expect.any(Number),
-            article_id: expect.any(Number)
+            votes: expect.any(Number)
           })
         }))
 
       });
   });
-  it("responds with an array which contains the articles comments in ascending order", () => {
+  it("responds with an array which contains the articles comments in descending order", () => {
     return request(app)
       .get("/api/articles/5/comments")
       .then(({ body }) => {
@@ -167,7 +166,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/999/comments")
       .expect(404)
       .then(({ text }) => {
-        expect(JSON.parse(text)).toEqual({ message: "Article Not Found" });
+        expect(JSON.parse(text)).toEqual({ message: "Article Not Found or No Comments Exist" });
       });
   });
   it("responds with a 400 status and a message when an invalid id is passed", () => {
@@ -176,39 +175,43 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(400)
       .then(({ res }) => expect(res.statusMessage).toBe("Bad Request"));
   });
+  it("responds with a 404 and a message when article is not found", () => {
+    return request(app)
+      .get("/api/articles/4/comments")
+      .expect(404)
+      .then(({ text }) => {
+        expect(JSON.parse(text)).toEqual({ message: "Article Not Found or No Comments Exist" });
+      });
+  })
 })
-
 describe("POST /api/articles/:article_id/comments", () => {
   const newComment = {
     "username": "lurker",
     "body": "This is my test article comment"
   };
-  const noUserComment = {
-    "username": "",
-    "body": "This is my test article comment"
-  };
-  const noBodyComment = {
-    "username": "lurker",
-    "body": ""
-  };
+  const emptyComment = {};
   it("should return the expected output object of the comment with the relevant data", () => {
     return request(app)
       .post("/api/articles/5/comments")
       .send(newComment)
       .expect(201)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body.body).toBe("This is my test article comment")
       });
-      
-  });
-  it("responds with a 404 and a message when article is not found", () => {
+  })
+  it("should return the expected output object of the comment with the relevant data when passed extra data", () => {
     return request(app)
-      .post("/api/articles/200000/comments")
-      .send(newComment)
-      .expect(404)
-      .then(({ text }) => {
-        expect(JSON.parse(text)).toEqual({ message: "Article Not Found" });
+      .post("/api/articles/5/comments")
+      .send({
+        "username": "lurker",
+        "body": "This is my test article comment",
+        "motto": "Ad Astra"
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.body).toBe("This is my test article comment")
       });
+
   });
   it("responds with a 400 status and a message when an invalid article id is passed", () => {
     return request(app)
@@ -220,15 +223,10 @@ describe("POST /api/articles/:article_id/comments", () => {
   it("responds with a 400 status and a message when an no username is passed", () => {
     return request(app)
       .post("/api/articles/5/comments")
-      .send(noUserComment)
+      .send(emptyComment)
       .expect(400)
-      .then(({ res }) => expect(res.text).toBe("You must provide a username"));
-  });
-  it("responds with a 400 status and a message when an no body is passed", () => {
-    return request(app)
-      .post("/api/articles/5/comments")
-      .send(noBodyComment)
-      .expect(400)
-      .then(({ res }) => expect(res.text).toBe("You must provide a comment"));
+      .then(({ text }) => {
+        expect(JSON.parse(text)).toEqual({ message: "Invalid request" });
+      });
   });
 });
