@@ -30,14 +30,18 @@ const sendArticles = function (req, res, next) {
     res.status(200).send(articles)
   })
     .catch((err) => {
+
       next(err)
     })
 }
 
 const sendArticleComments = function (req, res, next) {
   const { article_id } = req.params
-  getArticleComments(article_id).then((comments) => {
-    res.status(200).send(comments)
+  Promise.all([getArticleId(article_id), getArticleComments(article_id)]).then((comments) => {
+    if (comments[1].length === 0) {
+      res.status(200).send("No Comments Yet")
+    } else
+      res.status(200).send(comments[1])
   })
     .catch((err) => {
       next(err)
@@ -48,10 +52,10 @@ const sendArticleComments = function (req, res, next) {
 const recieveArticleComments = function (req, res, next) {
   const { article_id } = req.params
   postComment(article_id, req.body).then((comment) => {
-    
+
     res.status(201).send(comment)
   })
-    .catch((err)=>{
+    .catch((err) => {
       next(err)
     })
 

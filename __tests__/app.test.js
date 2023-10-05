@@ -165,22 +165,24 @@ describe("GET /api/articles/:article_id/comments", () => {
     return request(app)
       .get("/api/articles/999/comments")
       .expect(404)
-      .then(({ text }) => {
-        expect(JSON.parse(text)).toEqual({ message: "Article Not Found or No Comments Exist" });
+      .then(({ body }) => {
+        expect(body.message).toBe("Article Not Found");
       });
   });
   it("responds with a 400 status and a message when an invalid id is passed", () => {
     return request(app)
       .get("/api/articles/hello/comments")
       .expect(400)
-      .then(({ res }) => expect(res.statusMessage).toBe("Bad Request"));
+      .then(({ body }) => {
+        expect(body.message).toBe("Bad Request");
+      });
   });
   it("responds with a 404 and a message when article is not found", () => {
     return request(app)
-      .get("/api/articles/4/comments")
-      .expect(404)
+      .get("/api/articles/2/comments")
+      .expect(200)
       .then(({ text }) => {
-        expect(JSON.parse(text)).toEqual({ message: "Article Not Found or No Comments Exist" });
+        expect(text).toEqual("No Comments Yet");
       });
   })
 })

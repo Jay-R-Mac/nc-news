@@ -46,12 +46,7 @@ function getArticleComments(articleId) {
   return db
     .query("SELECT * FROM comments WHERE article_id =$1 ORDER BY comments.created_at DESC;", [articleId])
     .then(({ rows }) => {
-      if (rows.length === 0) {
-        return Promise.reject({
-          status: 404,
-          message: "Article Not Found or No Comments Exist",
-        });
-      }
+
       return rows;
     })
 
