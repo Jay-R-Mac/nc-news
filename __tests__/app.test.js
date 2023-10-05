@@ -183,6 +183,14 @@ describe("POST /api/articles/:article_id/comments", () => {
     "username": "lurker",
     "body": "This is my test article comment"
   };
+  const noUserComment = {
+    "username": "",
+    "body": "This is my test article comment"
+  };
+  const noBodyComment = {
+    "username": "lurker",
+    "body": ""
+  };
   it("should return the expected output object of the comment with the relevant data", () => {
     return request(app)
       .post("/api/articles/5/comments")
@@ -193,4 +201,34 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
       
   });
-})
+  it("responds with a 404 and a message when article is not found", () => {
+    return request(app)
+      .post("/api/articles/200000/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ text }) => {
+        expect(JSON.parse(text)).toEqual({ message: "Article Not Found" });
+      });
+  });
+  it("responds with a 400 status and a message when an invalid article id is passed", () => {
+    return request(app)
+      .post("/api/articles/hello/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ res }) => expect(res.statusMessage).toBe("Bad Request"));
+  });
+  it("responds with a 400 status and a message when an no username is passed", () => {
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send(noUserComment)
+      .expect(400)
+      .then(({ res }) => expect(res.text).toBe("You must provide a username"));
+  });
+  it("responds with a 400 status and a message when an no body is passed", () => {
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send(noBodyComment)
+      .expect(400)
+      .then(({ res }) => expect(res.text).toBe("You must provide a comment"));
+  });
+});

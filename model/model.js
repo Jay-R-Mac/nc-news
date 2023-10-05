@@ -61,11 +61,20 @@ function postComment(article, newComment) {
   const { username, body } = newComment
   const author = username
   const article_id = article
-  return db.query("INSERT INTO comments (author, body, article_id) VALUES ($1,$2,$3) RETURNING *;", [author, body, article_id])
+  return db.query("SELECT * FROM articles WHERE article_id = $1;", [article_id])
     .then(({ rows }) => {
-      return rows[0]
-    })
+      if (rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          message: "Article Not Found",
+        });
+      }
+      return db.query("INSERT INTO comments (author, body, article_id) VALUES ($1,$2,$3) RETURNING *;", [author, body, article_id])
+        .then(({ rows }) => {
+          return rows[0]
+        })
 
+    })
 }
 
 
