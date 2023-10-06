@@ -16,12 +16,7 @@
   },
   "GET /api/articles": {
     "description": "serves an array of all articles by date in descending order",
-    "queries": [
-      "author",
-      "topic",
-      "sort_by",
-      "order"
-    ],
+    "queries": ["author", "topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
         {
@@ -39,11 +34,7 @@
   },
   "GET /api/users": {
     "description": "serves an array of all users",
-    "queries": [
-      "username",
-      "name",
-      "avatar_url"
-    ],
+    "queries": ["username", "name", "avatar_url"],
     "exampleResponse": {
       "users": [
         {
@@ -94,6 +85,24 @@
       "articles/5/comments": [
         {
           "body": "This is a unique comment on this article!"
+        }
+      ]
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "serves an objet containing posted comment ",
+    "queries": [],
+    "exampleResponse": {
+      "articles/4": [
+        {
+          "title": "Seafood substitutions are increasing",
+          "topic": "cooking",
+          "author": "weegembump",
+          "article_id": 4,
+          "created_at": "2018-05-30T15:59:13.341Z",
+          "votes": 1,
+          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          "comment_count": 6
         }
       ]
     }

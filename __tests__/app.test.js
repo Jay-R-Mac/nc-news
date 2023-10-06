@@ -232,3 +232,55 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("PATCH /api/articles/:article_id", () => {
+  const newVote = {
+    "inc_votes": 5
+  };
+  const emptyVote = {};
+  it("should return the expected output object of an article with a changed vote count", () => {
+    return request(app)
+      .patch("/api/articles/4")
+      .send(newVote)
+      .expect(200)
+      .then(({body})=>{
+      expect(body).toMatchObject({
+          article_id: expect.any(Number),
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          created_at: expect.any(String),
+          votes: 5,
+          article_img_url: expect.any(String),
+          comment_count: expect.any(String)
+        })
+      })
+  })
+  it("responds with a 400 status and a message when an no vote is passed", () => {
+    return request(app)
+      .patch("/api/articles/4")
+      .send(emptyVote)
+      .expect(400)
+      .then(({ text }) => {
+        expect(JSON.parse(text)).toEqual({ message: "Invalid request" });
+      });
+  });
+  it("responds with a 400 status and a message when a malformed vote is passed", () => {
+    return request(app)
+      .patch("/api/articles/4")
+      .send({"notQuiteAVote": "abstained"})
+      .expect(400)
+      .then(({ text }) => {
+        expect(JSON.parse(text)).toEqual({ message: "Invalid request" });
+      });
+  });
+  it("responds with a 404 status and a message when the article is not found", () => {
+    return request(app)
+      .patch("/api/articles/9999")
+      .send(newVote)
+      .expect(404)
+      // .then(({ text }) => {
+      // //   expect(JSON.parse(text)).toEqual({ message: "Invalid request" });
+      // });
+  });
+})
