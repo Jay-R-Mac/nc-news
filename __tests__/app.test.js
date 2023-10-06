@@ -237,7 +237,7 @@ describe("PATCH /api/articles/:article_id", () => {
   const newVote = {
     "inc_votes": 5
   };
-  const emptyVote = {};
+  const emptyVote = {"inc_votes": "NoVote"};
   it("should return the expected output object of an article with a changed vote count", () => {
     return request(app)
       .patch("/api/articles/4")
@@ -260,16 +260,16 @@ describe("PATCH /api/articles/:article_id", () => {
     return request(app)
       .patch("/api/articles/4")
       .send(emptyVote)
-      .expect(400)
+      .expect(400) //change to 200 if time permits
       .then(({ text }) => {
-        expect(JSON.parse(text)).toEqual({ message: "Invalid request" });
+        expect(JSON.parse(text)).toEqual({ message: "Bad Request" });
       });
   });
   it("responds with a 400 status and a message when a malformed vote is passed", () => {
     return request(app)
       .patch("/api/articles/4")
       .send({"notQuiteAVote": "abstained"})
-      .expect(400)
+      .expect(400) //change to 200 if time permits
       .then(({ text }) => {
         expect(JSON.parse(text)).toEqual({ message: "Invalid request" });
       });
