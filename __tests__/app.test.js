@@ -319,10 +319,10 @@ describe("GET /api/users", () => {
     return request(app)
       .get("/api/users")
       .then((data) => {
-        expect(Array.isArray(data.body)).toBe(true);
+        expect(Array.isArray(data.body.users)).toBe(true);
       });
   });
-  it.only("responds with an array of users which contains a username, name and avatar URL", () => {
+  it("responds with an array of users which contains a username, name and avatar URL", () => {
     return request(app)
       .get("/api/users")
       .then(({ body }) => {
