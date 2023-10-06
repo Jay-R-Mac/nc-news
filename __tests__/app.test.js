@@ -279,8 +279,8 @@ describe("PATCH /api/articles/:article_id", () => {
       .patch("/api/articles/9999")
       .send(newVote)
       .expect(404)
-      // .then(({ text }) => {
-      // //   expect(JSON.parse(text)).toEqual({ message: "Invalid request" });
-      // });
+      .then(({ text }) => {
+        expect(JSON.parse(text)).toEqual({ message: "Article Not Found" });
+      });
   });
 })
