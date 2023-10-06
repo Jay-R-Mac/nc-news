@@ -369,4 +369,12 @@ describe("GET /api/articles?topic", () => {
         expect(body.message).toBe("Topic Not Found");
       });
   });
+  it("responds with a 200 and a message when the topic is found but not used", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual([]);
+      });
+  });
 });
