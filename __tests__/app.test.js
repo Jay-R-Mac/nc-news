@@ -174,7 +174,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(body.message).toBe("Bad Request");
       });
   });
-  it("responds with a 200 and a message when article is not found", () => {
+  it("responds with a 200 and an empty array when article is not found", () => {
     return request(app)
       .get("/api/articles/2/comments")
       .expect(200)
