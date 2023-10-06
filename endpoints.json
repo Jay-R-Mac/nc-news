@@ -106,5 +106,16 @@
         }
       ]
     }
+  },
+  "DELETE /api/comments/:article_id": {
+    "description": "deletes the comment by comment ID",
+    "queries": [],
+    "exampleResponse": {
+      "comments/4": [
+        {
+        
+        }
+      ]
+    }
   }
 }

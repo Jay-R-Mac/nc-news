@@ -5,7 +5,6 @@ const seed = require("../db/seeds/seed.js");
 const data = require("../db/data/test-data/index.js");
 const endPoints = require("../endpoints.json");
 
-
 beforeEach(() => {
   return seed(data);
 });
@@ -69,7 +68,7 @@ describe("GET /api/articles/:article_id", () => {
           created_at: expect.any(String),
           votes: expect.any(Number),
           article_img_url: expect.any(String),
-        })
+        });
       });
   });
   it("responds with a 404 and a message when article is not found", () => {
@@ -108,8 +107,8 @@ describe("GET /api/articles", () => {
     return request(app)
       .get("/api/articles")
       .then(({ body }) => {
-        expect(body.length).toBe(13)
-        body.forEach((article => {
+        expect(body.length).toBe(13);
+        body.forEach((article) => {
           expect(article).toMatchObject({
             article_id: expect.any(Number),
             title: expect.any(String),
@@ -118,20 +117,19 @@ describe("GET /api/articles", () => {
             created_at: expect.any(String),
             votes: expect.any(Number),
             article_img_url: expect.any(String),
-            comment_count: expect.any(String)
-          })
-        }))
-
+            comment_count: expect.any(String),
+          });
+        });
       });
   });
   it("responds with an array which contains the articles in order", () => {
     return request(app)
       .get("/api/articles")
       .then(({ body }) => {
-        expect([0, 1, 2, 3]).toBeSorted("created_at", { descending: true })
+        expect([0, 1, 2, 3]).toBeSorted("created_at", { descending: true });
       });
   });
-})
+});
 
 describe("GET /api/articles/:article_id/comments", () => {
   it("responds with a 200 status message", () => {
@@ -141,24 +139,23 @@ describe("GET /api/articles/:article_id/comments", () => {
     return request(app)
       .get("/api/articles/5/comments")
       .then(({ body }) => {
-        expect(body.length).toBe(2)
-        body.forEach((comment => {
+        expect(body.length).toBe(2);
+        body.forEach((comment) => {
           expect(comment).toMatchObject({
             comment_id: expect.any(Number),
             body: expect.any(String),
             author: expect.any(String),
             created_at: expect.any(String),
-            votes: expect.any(Number)
-          })
-        }))
-
+            votes: expect.any(Number),
+          });
+        });
       });
   });
   it("responds with an array which contains the articles comments in descending order", () => {
     return request(app)
       .get("/api/articles/5/comments")
       .then(({ body }) => {
-        expect([0, 1]).toBeSorted({ Descending: true })
+        expect([0, 1]).toBeSorted({ Descending: true });
       });
   });
   it("responds with a 404 and a message when article is not found", () => {
@@ -184,12 +181,12 @@ describe("GET /api/articles/:article_id/comments", () => {
       .then(({ text }) => {
         expect(text).toEqual("[]");
       });
-  })
-})
+  });
+});
 describe("POST /api/articles/:article_id/comments", () => {
   const newComment = {
-    "username": "lurker",
-    "body": "This is my test article comment"
+    username: "lurker",
+    body: "This is my test article comment",
   };
   const emptyComment = {};
   it("should return the expected output object of the comment with the relevant data", () => {
@@ -198,22 +195,21 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(newComment)
       .expect(201)
       .then(({ body }) => {
-        expect(body.body).toBe("This is my test article comment")
+        expect(body.body).toBe("This is my test article comment");
       });
-  })
+  });
   it("should return the expected output object of the comment with the relevant data when passed extra data", () => {
     return request(app)
       .post("/api/articles/5/comments")
       .send({
-        "username": "lurker",
-        "body": "This is my test article comment",
-        "motto": "Ad Astra"
+        username: "lurker",
+        body: "This is my test article comment",
+        motto: "Ad Astra",
       })
       .expect(201)
       .then(({ body }) => {
-        expect(body.body).toBe("This is my test article comment")
+        expect(body.body).toBe("This is my test article comment");
       });
-
   });
   it("responds with a 400 status and a message when an invalid article id is passed", () => {
     return request(app)
@@ -235,16 +231,16 @@ describe("POST /api/articles/:article_id/comments", () => {
 
 describe("PATCH /api/articles/:article_id", () => {
   const newVote = {
-    "inc_votes": 5
+    inc_votes: 5,
   };
-  const emptyVote = {"inc_votes": "NoVote"};
+  const emptyVote = { inc_votes: "NoVote" };
   it("should return the expected output object of an article with a changed vote count", () => {
     return request(app)
       .patch("/api/articles/4")
       .send(newVote)
       .expect(200)
-      .then(({body})=>{
-      expect(body).toMatchObject({
+      .then(({ body }) => {
+        expect(body).toMatchObject({
           article_id: expect.any(Number),
           title: expect.any(String),
           topic: expect.any(String),
@@ -252,10 +248,10 @@ describe("PATCH /api/articles/:article_id", () => {
           created_at: expect.any(String),
           votes: 5,
           article_img_url: expect.any(String),
-          comment_count: expect.any(String)
-        })
-      })
-  })
+          comment_count: expect.any(String),
+        });
+      });
+  });
   it("responds with a 400 status and a message when an no vote is passed", () => {
     return request(app)
       .patch("/api/articles/4")
@@ -268,7 +264,7 @@ describe("PATCH /api/articles/:article_id", () => {
   it("responds with a 400 status and a message when a malformed vote is passed", () => {
     return request(app)
       .patch("/api/articles/4")
-      .send({"notQuiteAVote": "abstained"})
+      .send({ notQuiteAVote: "abstained" })
       .expect(400) //change to 200 if time permits
       .then(({ text }) => {
         expect(JSON.parse(text)).toEqual({ message: "Invalid request" });
@@ -292,4 +288,24 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(JSON.parse(text)).toEqual({ message: "Bad Request" });
       });
   });
-})
+});
+
+describe("DELETE /api/comments/:comment_id", () => {
+  it("should return the expected output object of an article with a changed vote count", () => {
+    return request(app).delete("/api/comments/4").expect(204)
+  });
+  it("responds with a 400 status and a message when an invalid comment id is passed", () => {
+    return request(app)
+      .delete("/api/comments/hello")
+      .expect(400)
+      .then(({ res }) => expect(res.statusMessage).toBe("Bad Request"));
+  });
+  it("responds with a 404 status and a message when a non existent id is passed", () => {
+    return request(app)
+      .delete("/api/comments/99999")
+      .expect(404)
+      .then(({ text }) => {
+        expect(JSON.parse(text)).toEqual({ message: "Comment Not Found" });
+      });
+  });
+});
