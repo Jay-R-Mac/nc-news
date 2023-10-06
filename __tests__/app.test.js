@@ -293,7 +293,7 @@ describe("PATCH /api/articles/:article_id", () => {
 
 describe("DELETE /api/comments/:comment_id", () => {
   it("should return the expected output object of an article with a changed vote count", () => {
-    return request(app).delete("/api/comments/4").expect(204)
+    return request(app).delete("/api/comments/4").expect(204);
   });
   it("responds with a 400 status and a message when an invalid comment id is passed", () => {
     return request(app)
@@ -336,5 +336,4 @@ describe("GET /api/users", () => {
         });
       });
   });
-  
 });

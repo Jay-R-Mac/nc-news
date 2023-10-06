@@ -104,5 +104,5 @@ module.exports = {
   receiveArticleComments,
   receiveArticleVotes,
   selectComment,
-  sendUsers
+  sendUsers,
 };

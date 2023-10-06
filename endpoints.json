@@ -111,11 +111,7 @@
     "description": "deletes the comment by comment ID",
     "queries": [],
     "exampleResponse": {
-      "comments/4": [
-        {
-        
-        }
-      ]
+      "comments/4": [{}]
     }
   }
 }

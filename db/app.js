@@ -8,7 +8,7 @@ const {
   receiveArticleComments,
   receiveArticleVotes,
   selectComment,
-  sendUsers
+  sendUsers,
 } = require("../controller/controller");
 
 const app = express();
