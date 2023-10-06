@@ -7,6 +7,7 @@ const {
   postComment,
   castVote,
   deleteComment,
+  getUsers,
 } = require("../model/model.js");
 const endpoints = require("../endpoints.json");
 
@@ -88,6 +89,12 @@ const selectComment = function (req, res, next) {
       next(err);
     });
 };
+
+const sendUsers = function (req, res, next) {
+  getUsers().then((users) => {
+    res.status(200).send({users});
+  });
+};
 module.exports = {
   sendTopics,
   sendEndpoints,
@@ -97,4 +104,5 @@ module.exports = {
   receiveArticleComments,
   receiveArticleVotes,
   selectComment,
+  sendUsers,
 };
