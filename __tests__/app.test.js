@@ -322,12 +322,12 @@ describe("GET /api/users", () => {
         expect(Array.isArray(data.body)).toBe(true);
       });
   });
-  it("responds with an array of users which contains a username, name and avatar URL", () => {
+  it.only("responds with an array of users which contains a username, name and avatar URL", () => {
     return request(app)
       .get("/api/users")
       .then(({ body }) => {
-        expect(body.length).toBe(4);
-        body.forEach((user) => {
+        expect(body.users.length).toBe(4);
+        body.users.forEach((user) => {
           expect(user).toMatchObject({
             username: expect.any(String),
             name: expect.any(String),

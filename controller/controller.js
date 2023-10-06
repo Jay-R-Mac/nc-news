@@ -92,7 +92,7 @@ const selectComment = function (req, res, next) {
 
 const sendUsers = function (req, res, next) {
   getUsers().then((users) => {
-    res.status(200).send(users);
+    res.status(200).send({users});
   });
 };
 module.exports = {
