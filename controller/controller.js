@@ -8,6 +8,7 @@ const {
   castVote,
   deleteComment,
   getUsers,
+  checkTopicExists,
 } = require("../model/model.js");
 const endpoints = require("../endpoints.json");
 
@@ -35,9 +36,10 @@ const sendArticleId = function (req, res, next) {
 };
 
 const sendArticles = function (req, res, next) {
-  getArticles()
+  const topic = req.query.topic;
+  Promise.all([checkTopicExists(topic), getArticles(topic)])
     .then((articles) => {
-      res.status(200).send(articles);
+      res.status(200).send(articles[1]);
     })
     .catch((err) => {
       next(err);
@@ -92,9 +94,10 @@ const selectComment = function (req, res, next) {
 
 const sendUsers = function (req, res, next) {
   getUsers().then((users) => {
-    res.status(200).send({users});
+    res.status(200).send({ users });
   });
 };
+
 module.exports = {
   sendTopics,
   sendEndpoints,

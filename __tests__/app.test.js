@@ -174,7 +174,7 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(body.message).toBe("Bad Request");
       });
   });
-  it("responds with a 200 and a message when article is not found", () => {
+  it("responds with a 200 and an empty array when article is not found", () => {
     return request(app)
       .get("/api/articles/2/comments")
       .expect(200)
@@ -334,6 +334,47 @@ describe("GET /api/users", () => {
             avatar_url: expect.any(String),
           });
         });
+      });
+  });
+});
+
+describe("GET /api/articles?topic", () => {
+  it("responds with a 200 status message", () => {
+    return request(app).get("/api/articles?topic=mitch").expect(200);
+  });
+  it("responds with an an array of object which contains article information", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .then(({ body }) => {
+        expect(body.length).toBe(12);
+        body.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: "mitch",
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+      });
+  });
+  it("responds with a 404 and a message when the topic is not found", () => {
+    return request(app)
+      .get("/api/articles?topic=PossiblyNotATopic")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("Topic Not Found");
+      });
+  });
+  it("responds with a 200 and a message when the topic is found but not used", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual([]);
       });
   });
 });

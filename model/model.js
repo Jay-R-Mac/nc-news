@@ -20,27 +20,51 @@ function getArticleId(articleId) {
     });
 }
 
-function getArticles() {
+function checkTopicExists(topic) {
+  if(!topic){return[]}
+
   return db
-    .query(
-      `SELECT articles.article_id,
-    articles.title,
-    articles.topic,
-    articles.author,
-    articles.created_at,
-    articles.votes,
-    articles.article_img_url,
-    COUNT(comments.comment_id) AS comment_count
-    FROM articles
-    LEFT OUTER JOIN comments
-   ON articles.article_id = comments.article_id
-   GROUP BY articles.article_id
-   ORDER BY articles.created_at DESC;
-   `
-    )
+    .query(`SELECT * FROM topics WHERE slug = $1`, [topic])
     .then(({ rows }) => {
-      return rows;
+      if (rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          message: "Topic Not Found",
+        });
+      }
     });
+}
+
+function getArticles(topic) {
+  const QueryStringFront = `
+SELECT articles.article_id,
+articles.title,
+articles.topic,
+articles.author,
+articles.created_at,
+articles.votes,
+articles.article_img_url,
+COUNT(comments.comment_id) AS comment_count
+FROM articles
+LEFT OUTER JOIN comments
+ON articles.article_id = comments.article_id 
+`;
+
+  const topicQueryString = `WHERE articles.topic = $1`;
+
+  const QueryStringBack = `GROUP BY articles.article_id
+ORDER BY articles.created_at DESC;`;
+
+  let fullQueryString = QueryStringFront + QueryStringBack;
+
+  const topicArr = [];
+  if (topic) {
+    topicArr.push(topic);
+    fullQueryString = QueryStringFront + topicQueryString + QueryStringBack;
+  }
+  return db.query(fullQueryString, [...topicArr]).then(({ rows }) => {
+    return rows;
+  });
 }
 
 function getArticleComments(articleId) {
@@ -80,11 +104,11 @@ function castVote(article, vote) {
   return db
     .query(
       `
-    UPDATE articles 
-    SET votes = votes + $1
-    WHERE article_id = $2
+      UPDATE articles 
+      SET votes = votes + $1
+      WHERE article_id = $2
     RETURNING (SELECT COUNT(comment_id) FROM comments WHERE article_id = $2) AS comment_count, *;
-  `,
+    `,
       [inc_votes, article]
     )
     .then(({ rows }) => {
@@ -119,4 +143,5 @@ module.exports = {
   castVote,
   deleteComment,
   getUsers,
+  checkTopicExists,
 };
