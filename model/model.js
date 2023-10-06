@@ -1,5 +1,23 @@
 const db = require("../db/connection");
 
+const QueryStringFront = `SELECT articles.article_id,
+articles.title,
+articles.topic,
+articles.author,
+articles.created_at,
+articles.votes,
+articles.article_img_url,
+COUNT(comments.comment_id) AS comment_count
+FROM articles
+LEFT OUTER JOIN comments
+ON articles.article_id = comments.article_id
+`;
+
+const topicQueryString = `WHERE articles.topic = $1`;
+
+const QueryStringBack = ` GROUP BY articles.article_id
+ORDER BY articles.created_at DESC;`
+
 function getTopics() {
   return db.query("SELECT * FROM topics;").then(({ rows }) => {
     return rows;
@@ -21,38 +39,8 @@ function getArticleId(articleId) {
 }
 
 function getArticles(topic) {
-  const defaultQueryString = `SELECT articles.article_id,
-articles.title,
-articles.topic,
-articles.author,
-articles.created_at,
-articles.votes,
-articles.article_img_url,
-COUNT(comments.comment_id) AS comment_count
-FROM articles
-LEFT OUTER JOIN comments
-ON articles.article_id = comments.article_id
-GROUP BY articles.article_id
-ORDER BY articles.created_at DESC;
-`;
-
-  const topicQueryString = `SELECT articles.article_id,
-articles.title,
-articles.topic,
-articles.author,
-articles.created_at,
-articles.votes,
-articles.article_img_url,
-COUNT(comments.comment_id) AS comment_count
-FROM articles
-LEFT OUTER JOIN comments
-ON articles.article_id = comments.article_id
-WHERE articles.topic = $1
-GROUP BY articles.article_id
-ORDER BY articles.created_at DESC;
-`;
   if (topic) {
-    return db.query(topicQueryString, [topic]).then(({ rows }) => {
+    return db.query(QueryStringFront+topicQueryString+QueryStringBack, [topic]).then(({ rows }) => {
       if (rows.length === 0) {
         return Promise.reject({
           status: 404,
@@ -62,7 +50,7 @@ ORDER BY articles.created_at DESC;
       return rows;
     });
   } else {
-    return db.query(defaultQueryString).then(({ rows }) => {
+    return db.query(QueryStringFront+QueryStringBack).then(({ rows }) => {
       return rows;
     });
   }
@@ -73,7 +61,7 @@ function getArticleComments(articleId) {
     .query(
       "SELECT * FROM comments WHERE article_id =$1 ORDER BY comments.created_at DESC;",
       [articleId]
-    )
+      )
     .then(({ rows }) => {
       return rows;
     });
@@ -87,10 +75,10 @@ function postComment(article, newComment) {
     return Promise.reject({ status: 400, message: "Invalid request" });
   }
   return db
-    .query(
-      "INSERT INTO comments (author, body, article_id) VALUES ($1,$2,$3) RETURNING *;",
+  .query(
+    "INSERT INTO comments (author, body, article_id) VALUES ($1,$2,$3) RETURNING *;",
       [author, body, article_id]
-    )
+      )
     .then(({ rows }) => {
       return rows[0];
     });
@@ -98,20 +86,20 @@ function postComment(article, newComment) {
 
 function castVote(article, vote) {
   const { inc_votes } = vote;
-
+  
   if (!inc_votes) {
     return Promise.reject({ status: 400, message: "Invalid request" });
   }
   return db
     .query(
       `
-    UPDATE articles 
-    SET votes = votes + $1
-    WHERE article_id = $2
+      UPDATE articles 
+      SET votes = votes + $1
+      WHERE article_id = $2
     RETURNING (SELECT COUNT(comment_id) FROM comments WHERE article_id = $2) AS comment_count, *;
-  `,
+    `,
       [inc_votes, article]
-    )
+      )
     .then(({ rows }) => {
       return rows[0];
     });
@@ -128,10 +116,10 @@ function deleteComment(commentId) {
         });
       }
     });
-}
-
-function getUsers() {
-  return db.query("SELECT * FROM users;").then(({ rows }) => {
+  }
+  
+  function getUsers() {
+    return db.query("SELECT * FROM users;").then(({ rows }) => {
     return rows;
   });
 }
