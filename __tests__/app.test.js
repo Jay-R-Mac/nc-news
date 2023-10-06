@@ -378,3 +378,26 @@ describe("GET /api/articles?topic", () => {
       });
   });
 });
+
+describe("GET /api/articles/:article_id(comment_count)", () => {
+  it("responds with a 200 status message", () => {
+    return request(app).get("/api/articles/2").expect(200);
+  });
+  it("responds with an object which contains article information", () => {
+    return request(app)
+      .get("/api/articles/2")
+      .then(({ body }) => {
+        expect(body.article).toMatchObject({
+          article_id: 2,
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(String)
+        });
+      });
+  });
+})
