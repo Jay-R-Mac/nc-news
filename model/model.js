@@ -78,7 +78,8 @@ function castVote(article, vote) {
     return Promise.reject({ status: 400, message: "Invalid request" });
   }
   return db
-    .query(`
+    .query(
+      `
     UPDATE articles 
     SET votes = votes + $1
     WHERE article_id = $2
@@ -91,6 +92,18 @@ function castVote(article, vote) {
     });
 }
 
+function deleteComment(commentId) {
+  return db
+    .query("DELETE FROM comments WHERE comment_id = $1 RETURNING*", [commentId])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          message: "Comment Not Found",
+        });
+      }
+    });
+}
 module.exports = {
   getTopics,
   getArticleId,
@@ -98,4 +111,5 @@ module.exports = {
   getArticleComments,
   postComment,
   castVote,
+  deleteComment,
 };

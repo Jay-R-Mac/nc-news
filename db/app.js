@@ -6,12 +6,13 @@ const {
   sendArticles,
   sendArticleComments,
   receiveArticleComments,
-  receiveArticleVotes
+  receiveArticleVotes,
+  selectComment,
 } = require("../controller/controller");
 
 const app = express();
 
-app.use(express.json())
+app.use(express.json());
 
 app.get("/api/topics", sendTopics);
 
@@ -19,20 +20,21 @@ app.get("/api", sendEndpoints);
 
 app.get("/api/articles/:article_id", sendArticleId);
 
-app.get("/api/articles", sendArticles)
+app.get("/api/articles", sendArticles);
 
-app.get("/api/articles/:article_id/comments", sendArticleComments)
+app.get("/api/articles/:article_id/comments", sendArticleComments);
 
-app.post("/api/articles/:article_id/comments", receiveArticleComments)
+app.post("/api/articles/:article_id/comments", receiveArticleComments);
 
-app.patch("/api/articles/:article_id/", receiveArticleVotes)
+app.patch("/api/articles/:article_id/", receiveArticleVotes);
+
+app.delete("/api/comments/:comment_id", selectComment);
 
 app.all("/*", (req, res) => {
   res.status(404).send({ message: "Not Found" });
 });
 
 app.use((err, req, res, next) => {
-
   if (err.code === "22P02") {
     res.status(400).send({ message: "Bad Request" });
   } else if (err.status) {

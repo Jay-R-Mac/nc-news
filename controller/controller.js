@@ -6,6 +6,7 @@ const {
   getArticleComments,
   postComment,
   castVote,
+  deleteComment,
 } = require("../model/model.js");
 const endpoints = require("../endpoints.json");
 
@@ -74,6 +75,19 @@ const receiveArticleVotes = function (req, res, next) {
       next(err);
     });
 };
+
+const selectComment = function (req, res, next) {
+  const { comment_id } = req.params;
+
+  deleteComment(comment_id)
+    .then(() => {
+      res.status(204).send();
+    })
+
+    .catch((err) => {
+      next(err);
+    });
+};
 module.exports = {
   sendTopics,
   sendEndpoints,
@@ -82,4 +96,5 @@ module.exports = {
   sendArticleComments,
   receiveArticleComments,
   receiveArticleVotes,
+  selectComment,
 };
