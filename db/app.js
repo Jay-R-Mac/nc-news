@@ -8,6 +8,7 @@ const {
   receiveArticleComments,
   receiveArticleVotes,
   selectComment,
+  sendUsers
 } = require("../controller/controller");
 
 const app = express();
@@ -15,6 +16,8 @@ const app = express();
 app.use(express.json());
 
 app.get("/api/topics", sendTopics);
+
+app.get("/api/users", sendUsers);
 
 app.get("/api", sendEndpoints);
 

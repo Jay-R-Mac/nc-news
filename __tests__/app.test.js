@@ -89,7 +89,7 @@ describe("GET /api/articles/:article_id", () => {
 });
 
 describe("error handling", () => {
-  it("should return a 404 error status code and a message when using a GET", () => {
+  it("should return a 404 error status code and a message when using a GET all that is invalid", () => {
     return request(app)
       .get("/notvalid")
       .expect(404)
@@ -183,6 +183,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+
 describe("POST /api/articles/:article_id/comments", () => {
   const newComment = {
     username: "lurker",
@@ -308,4 +309,32 @@ describe("DELETE /api/comments/:comment_id", () => {
         expect(JSON.parse(text)).toEqual({ message: "Comment Not Found" });
       });
   });
+});
+
+describe("GET /api/users", () => {
+  it("responds with a 200 status message", () => {
+    return request(app).get("/api/users").expect(200);
+  });
+  it("responds with an array of users", () => {
+    return request(app)
+      .get("/api/users")
+      .then((data) => {
+        expect(Array.isArray(data.body)).toBe(true);
+      });
+  });
+  it("responds with an array of users which contains a username, name and avatar URL", () => {
+    return request(app)
+      .get("/api/users")
+      .then(({ body }) => {
+        expect(body.length).toBe(4);
+        body.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+  
 });

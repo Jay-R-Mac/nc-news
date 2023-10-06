@@ -104,6 +104,12 @@ function deleteComment(commentId) {
       }
     });
 }
+
+function getUsers() {
+  return db.query("SELECT * FROM users;").then(({ rows }) => {
+    return rows;
+  });
+}
 module.exports = {
   getTopics,
   getArticleId,
@@ -112,4 +118,5 @@ module.exports = {
   postComment,
   castVote,
   deleteComment,
+  getUsers,
 };
