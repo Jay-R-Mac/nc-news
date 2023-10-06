@@ -283,4 +283,13 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(JSON.parse(text)).toEqual({ message: "Article Not Found" });
       });
   });
+  it("responds with a 400 status and a message when an invalid article ID is used", () => {
+    return request(app)
+      .patch("/api/articles/Hello")
+      .send(newVote)
+      .expect(400)
+      .then(({ text }) => {
+        expect(JSON.parse(text)).toEqual({ message: "Bad Request" });
+      });
+  });
 })
