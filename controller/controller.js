@@ -35,7 +35,8 @@ const sendArticleId = function (req, res, next) {
 };
 
 const sendArticles = function (req, res, next) {
-  getArticles()
+  const topic = req.query.topic
+  getArticles(topic)
     .then((articles) => {
       res.status(200).send(articles);
     })
@@ -95,6 +96,7 @@ const sendUsers = function (req, res, next) {
     res.status(200).send({users});
   });
 };
+
 module.exports = {
   sendTopics,
   sendEndpoints,

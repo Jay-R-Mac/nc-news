@@ -113,5 +113,23 @@
     "exampleResponse": {
       "comments/4": [{}]
     }
+  },
+  "GET /api/articles(topic query)": {
+    "description": "serves an array of filtered articles by a specific topic",
+    "queries": ["coding", "cooking", "football"],
+    "exampleResponse": {
+      "articles?topic=cooking": [
+        {
+          "title": "Seafood substitutions are increasing",
+          "topic": "cooking",
+          "author": "weegembump",
+          "article_id": 4,
+          "created_at": "2018-05-30T15:59:13.341Z",
+          "votes": 0,
+          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          "comment_count": 6
+        }
+      ]
+    }
   }
 }

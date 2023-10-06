@@ -337,3 +337,36 @@ describe("GET /api/users", () => {
       });
   });
 });
+
+describe("GET /api/articles?topic", () => {
+  it("responds with a 200 status message", () => {
+    return request(app).get("/api/articles?topic=mitch").expect(200);
+  });
+  it("responds with an an array of object which contains article information", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .then(({ body }) => {
+        expect(body.length).toBe(12);
+        body.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: "mitch",
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+      });
+  });
+  it("responds with a 404 and a message when the topic is not found", () => {
+    return request(app)
+      .get("/api/articles?topic=PossiblyNotATopic")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("Topic Not Found");
+      });
+  });
+});
