@@ -5,7 +5,8 @@ const {
   sendArticleId,
   sendArticles,
   sendArticleComments,
-  recieveArticleComments,
+  receiveArticleComments,
+  receiveArticleVotes
 } = require("../controller/controller");
 
 const app = express();
@@ -22,7 +23,9 @@ app.get("/api/articles", sendArticles)
 
 app.get("/api/articles/:article_id/comments", sendArticleComments)
 
-app.post("/api/articles/:article_id/comments", recieveArticleComments)
+app.post("/api/articles/:article_id/comments", receiveArticleComments)
+
+app.patch("/api/articles/:article_id/", receiveArticleVotes)
 
 app.all("/*", (req, res) => {
   res.status(404).send({ message: "Not Found" });
