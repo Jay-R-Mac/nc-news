@@ -115,7 +115,7 @@ function postComment(article, newComment) {
 function castVote(article, vote) {
   const { inc_votes } = vote;
 
-  if (!inc_votes) {
+  if (!inc_votes && inc_votes !== 0) {
     return Promise.reject({ status: 400, message: "Invalid request" });
   }
   return db
