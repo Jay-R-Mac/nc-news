@@ -107,7 +107,7 @@
       ]
     }
   },
-  "DELETE /api/comments/:article_id": {
+  "DELETE /api/comments/:comment_id": {
     "description": "deletes the comment by comment ID",
     "queries": [],
     "exampleResponse": {
