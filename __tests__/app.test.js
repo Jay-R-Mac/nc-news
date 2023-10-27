@@ -216,7 +216,7 @@ describe("POST /api/articles/:article_id/comments", () => {
     return request(app)
       .post("/api/articles/hello/comments")
       .send(newComment)
-      .expect(400)
+      .expect(400) 
       .then(({ res }) => expect(res.statusMessage).toBe("Bad Request"));
   });
   it("responds with a 400 status and a message when an no username is passed", () => {
